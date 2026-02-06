@@ -45,7 +45,7 @@ mod tests {
 
         // Airdrop some SOL to the payer keypair
         program
-            .airdrop(&payer.pubkey(), 10 * LAMPORTS_PER_SOL)
+            .airdrop(&payer.pubkey(), 10u64.checked_mul(LAMPORTS_PER_SOL).expect("Overflow in airdrop amount"))
             .expect("Failed to airdrop SOL to payer");
 
         // Load program SO file
@@ -206,10 +206,18 @@ mod tests {
 
         // Airdrop SOL to both maker and taker
         program
-            .airdrop(&maker.pubkey(), 10 * LAMPORTS_PER_SOL)
+            .airdrop(
+                &maker.pubkey(),
+                10u64.checked_mul(LAMPORTS_PER_SOL).expect("Overflow in airdrop amount"),
+            )
             .unwrap();
         program
-            .airdrop(&taker.pubkey(), 10 * LAMPORTS_PER_SOL)
+            .airdrop(
+                &taker.pubkey(),
+                10u64
+                    .checked_mul(LAMPORTS_PER_SOL)
+                    .expect("Overflow in airdrop amount"),
+            )
             .unwrap();
 
         // Create two mints (Mint A and Mint B) with 6 decimal places
@@ -311,11 +319,14 @@ mod tests {
         // ==================== WARP TIME FORWARD 5 DAYS ====================
         // Update the clock timestamp
         let mut clock: Clock = program.get_sysvar();
-        clock.unix_timestamp += FIVE_DAYS_IN_SECONDS + 1;
+        clock.unix_timestamp = clock
+            .unix_timestamp
+            .checked_add(FIVE_DAYS_IN_SECONDS.checked_add(1).unwrap())
+            .expect("Overflow in clock timestamp addition");
         program.set_sysvar(&clock);
 
         // Also warp the slot forward and expire the blockhash
-        program.warp_to_slot(clock.slot + 1_000_000);
+        program.warp_to_slot(clock.slot.checked_add(1_000_000).unwrap());
         program.expire_blockhash();
 
         // ==================== TAKE INSTRUCTION ====================
@@ -409,7 +420,12 @@ mod tests {
         // Create maker keypair
         let maker = Keypair::new();
         program
-            .airdrop(&maker.pubkey(), 10 * LAMPORTS_PER_SOL)
+            .airdrop(
+                &maker.pubkey(),
+                10u64
+                    .checked_mul(LAMPORTS_PER_SOL)
+                    .expect("Overflow in airdrop amount"),
+            )
             .unwrap();
 
         // Create mint A
@@ -569,10 +585,20 @@ mod tests {
         let taker = Keypair::new();
 
         program
-            .airdrop(&maker.pubkey(), 10 * LAMPORTS_PER_SOL)
+            .airdrop(
+                &maker.pubkey(),
+                10u64
+                    .checked_mul(LAMPORTS_PER_SOL)
+                    .expect("Overflow in airdrop amount"),
+            )
             .unwrap();
         program
-            .airdrop(&taker.pubkey(), 10 * LAMPORTS_PER_SOL)
+            .airdrop(
+                &taker.pubkey(),
+                10u64
+                    .checked_mul(LAMPORTS_PER_SOL)
+                    .expect("Overflow in airdrop amount"),
+            )
             .unwrap();
 
         // Create mints
@@ -699,10 +725,20 @@ mod tests {
         let taker = Keypair::new();
 
         program
-            .airdrop(&maker.pubkey(), 10 * LAMPORTS_PER_SOL)
+            .airdrop(
+                &maker.pubkey(),
+                10u64
+                    .checked_mul(LAMPORTS_PER_SOL)
+                    .expect("Overflow in airdrop amount"),
+            )
             .unwrap();
         program
-            .airdrop(&taker.pubkey(), 10 * LAMPORTS_PER_SOL)
+            .airdrop(
+                &taker.pubkey(),
+                10u64
+                    .checked_mul(LAMPORTS_PER_SOL)
+                    .expect("Overflow in airdrop amount"),
+            )
             .unwrap();
 
         // Create mints
@@ -787,11 +823,16 @@ mod tests {
         let mut clock: Clock = program.get_sysvar();
         msg!("Current slot: {}, timestamp: {}", clock.slot, clock.unix_timestamp);
 
-        clock.unix_timestamp += FIVE_DAYS_IN_SECONDS + 1;
+        clock.unix_timestamp = clock.unix_timestamp
+            .checked_add(FIVE_DAYS_IN_SECONDS)
+            .unwrap()
+            .checked_add(1)
+            .unwrap();
+        
         program.set_sysvar(&clock);
 
         // Also warp the slot forward and expire the blockhash
-        program.warp_to_slot(clock.slot + 1_000_000);
+        program.warp_to_slot(clock.slot.checked_add(1_000_000).unwrap());
         program.expire_blockhash();
 
         let new_clock: Clock = program.get_sysvar();
