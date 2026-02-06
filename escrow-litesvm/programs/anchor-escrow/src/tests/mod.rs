@@ -309,9 +309,14 @@ mod tests {
         msg!("Vault balance after Make: {}", vault_data.amount);
 
         // ==================== WARP TIME FORWARD 5 DAYS ====================
+        // Update the clock timestamp
         let mut clock: Clock = program.get_sysvar();
         clock.unix_timestamp += FIVE_DAYS_IN_SECONDS + 1;
         program.set_sysvar(&clock);
+
+        // Also warp the slot forward and expire the blockhash
+        program.warp_to_slot(clock.slot + 1_000_000);
+        program.expire_blockhash();
 
         // ==================== TAKE INSTRUCTION ====================
         // Derive the taker's ATA for mint_a (will receive tokens from vault)
@@ -778,14 +783,19 @@ mod tests {
         msg!("Make transaction successful");
 
         // ==================== WARP TIME FORWARD 5 DAYS ====================
-        // Get current clock and advance it by 5 days
+        // Update the clock timestamp
         let mut clock: Clock = program.get_sysvar();
-        msg!("Current clock timestamp: {}", clock.unix_timestamp);
+        msg!("Current slot: {}, timestamp: {}", clock.slot, clock.unix_timestamp);
 
-        clock.unix_timestamp += FIVE_DAYS_IN_SECONDS + 1; // Add 5 days + 1 second
+        clock.unix_timestamp += FIVE_DAYS_IN_SECONDS + 1;
         program.set_sysvar(&clock);
 
-        msg!("New clock timestamp: {}", clock.unix_timestamp);
+        // Also warp the slot forward and expire the blockhash
+        program.warp_to_slot(clock.slot + 1_000_000);
+        program.expire_blockhash();
+
+        let new_clock: Clock = program.get_sysvar();
+        msg!("New slot: {}, timestamp: {}", new_clock.slot, new_clock.unix_timestamp);
 
         // ==================== TAKE INSTRUCTION (should succeed now) ====================
         let taker_ata_a = associated_token::get_associated_token_address(&taker.pubkey(), &mint_a);
