@@ -6,7 +6,6 @@ use ephemeral_vrf_sdk::types::SerializableAccountMeta;
 
 use crate::state::UserAccount;
 
-// ── Task 1: Request randomness on L1 (DEFAULT_QUEUE) ────────────────────────
 
 #[vrf]
 #[derive(Accounts)]
@@ -44,7 +43,6 @@ impl<'info> RequestRandomness<'info> {
     }
 }
 
-// ── Task 2: Request randomness inside ER (DEFAULT_EPHEMERAL_QUEUE, free) ────
 
 #[vrf]
 #[derive(Accounts)]
