@@ -1,0 +1,8 @@
+[2026-02-11--15-18-50 INFO actix_server::builder] starting 5 workers
+[2026-02-11--15-18-50 INFO actix_server::server] Tokio runtime found; starting in existing Tokio runtime
+[2026-02-11--15-18-50 INFO actix_server::server] starting service: "actix-web-service-127.0.0.1:18488", workers: 5, listening on: 127.0.0.1:18488
+[2026-02-11--15-18-52 INFO parity_ws] Listening for new connections on 127.0.0.1:8900.
+[2026-02-11--15-18-53 INFO txtx::svm::deploy_program] Program Upgraded - Program 9hG187VazKdEZcYbsEcoPuPEWwkfF9HccUDTAJzuEcg3 has been upgraded
+[2026-02-11--15-25-18 INFO parity_ws::io] Accepted a new tcp connection from 127.0.0.1:65239.
+[2026-02-11--15-26-56 INFO parity_ws::io] Accepted a new tcp connection from 127.0.0.1:65294.
+[2026-02-11--15-26-58 INFO parity_ws::io] Accepted a new tcp connection from 127.0.0.1:65298.
